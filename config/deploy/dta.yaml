@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trust-anchor-%NUM%
+  labels:
+    app: trust-anchor-%NUM%
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trust-anchor-%NUM%
+  template:
+    metadata:
+      labels:
+        app: trust-anchor-%NUM%
+    spec:
+      containers:
+      - name: dta
+        image: ko://github.com/davidhadas/distributed-trust-anchor/cmd/dta
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8888
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trust-anchor-%NUM%
+spec:
+  selector:
+    app: trust-anchor-%NUM%
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8888
